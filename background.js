@@ -32,9 +32,7 @@ function getExtensionFromUrl(url) {
     const m = u.pathname.match(/\.([a-zA-Z0-9]{2,5})$/);
     if (m) return "." + m[1].toLowerCase();
   } catch {
-    // Invalid URL, fall through to default
   }
-  // If Pinterest/CDN URL has no extension, default to .jpg
   return ".jpg";
 }
 
@@ -57,7 +55,6 @@ async function downloadWithFilename(imageUrl, title, pinId) {
   });
 }
 
-// Handle messages from content script (download button intercept)
 browser.runtime.onMessage.addListener(async (msg, sender) => {
   if (msg?.type === "DOWNLOAD_IMAGE") {
     await downloadWithFilename(msg.imageUrl, msg.title, msg.pinId);
@@ -65,19 +62,16 @@ browser.runtime.onMessage.addListener(async (msg, sender) => {
   }
 });
 
-// Handle context menu clicks
 browser.contextMenus.onClicked.addListener(async (info, tab) => {
   if (info.menuItemId !== MENU_ID) return;
 
   const imageUrl = info.srcUrl;
   if (!imageUrl || !tab?.id) return;
 
-  // Ask the content script (on pinterest.com) for a good name.
   let meta = {};
   try {
     meta = await browser.tabs.sendMessage(tab.id, { type: "GET_PIN_META" });
   } catch {
-    // Content script not available (e.g., not on pinterest.com)
   }
 
   await downloadWithFilename(imageUrl, meta.title, meta.pinId);
