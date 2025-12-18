@@ -1,8 +1,3 @@
-/**
- * Background script for Pinterest Filename Fix extension.
- * Handles downloads with proper filenames.
- */
-
 const MENU_ID = "pinterest-download-with-filename";
 
 browser.contextMenus.create({
@@ -11,10 +6,6 @@ browser.contextMenus.create({
   contexts: ["image"]
 });
 
-/**
- * Sanitize a string to be safe for use as a filename.
- * Removes filesystem-illegal characters on Windows/macOS/Linux.
- */
 function sanitizeBaseName(s) {
   return (s || "")
     .replace(/[\\/:*?"<>|]+/g, " ")

@@ -1,7 +1,4 @@
-/**
- * Content script for Pinterest pages.
- * Intercepts the "Download image" button to download with proper filenames.
- */
+
 
 const DOWNLOAD_REGEX = /\b(baixar|download|descargar|télécharger|herunterladen)\b/i;
 const CLICKABLE_SELECTOR = "button,[role=\"button\"],a";
