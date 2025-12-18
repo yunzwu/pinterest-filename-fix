@@ -1,4 +1,4 @@
-<![CDATA[<p align="center">
+<p align="center">
   <img src="assets/yui.jpg" alt="Pinterest Filename Fix" width="400">
 </p>
 
@@ -93,4 +93,3 @@ MIT License - see [LICENSE](LICENSE) file for details.
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
-]]>
