@@ -1,0 +1,30 @@
+{
+  "manifest_version": 2,
+  "name": "Pinterest Filename Fix",
+  "version": "0.1.0",
+  "description": "Downloads Pinterest images with a proper filename like title.jpg instead of just jpg.",
+  "icons": {
+    "48": "icons/icon-48.svg"
+  },
+
+  "permissions": [
+    "downloads",
+    "contextMenus",
+    "activeTab",
+    "*://*.pinterest.com/*",
+    "*://i.pinimg.com/*"
+  ],
+
+  "background": {
+    "scripts": ["background.js"]
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["*://*.pinterest.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
+

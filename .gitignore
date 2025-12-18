@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Build artifacts
+web-ext-artifacts/
+*.xpi
+*.zip
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+

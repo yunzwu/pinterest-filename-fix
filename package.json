@@ -1,0 +1,20 @@
+{
+  "name": "pinterest-filename-fix",
+  "version": "0.1.0",
+  "description": "Downloads Pinterest images with proper filenames instead of just 'jpg'",
+  "private": true,
+  "scripts": {
+    "dev": "web-ext run --firefox=\"C:\\Program Files\\Zen Browser\\zen.exe\"",
+    "lint": "web-ext lint",
+    "build": "web-ext build -o --overwrite-dest",
+    "sign": "web-ext sign"
+  },
+  "keywords": [
+    "firefox",
+    "extension",
+    "pinterest",
+    "download"
+  ],
+  "license": "MIT"
+}
+
