@@ -1,3 +1,7 @@
+<![CDATA[<p align="center">
+  <img src="assets/yui.jpg" alt="Pinterest Filename Fix" width="400">
+</p>
+
 # Pinterest Filename Fix
 
 A Firefox extension that fixes Pinterest image downloads by giving them proper filenames (e.g., `Pin Title.jpg`) instead of just `jpg`.
@@ -51,6 +55,22 @@ This creates a `.zip` file in `web-ext-artifacts/` that you can install in Firef
 2. Click the "Download image" button (or "Baixar imagem" in Portuguese)
 3. The image will be saved to `Downloads/Pinterest/<Pin Title>.jpg` with a proper filename
 
+## Project Structure
+
+```
+pinterest-filename-fix/
+├── src/
+│   ├── background.js    # Handles downloads with proper filenames
+│   └── content.js       # Intercepts download button clicks
+├── icons/
+│   └── icon-48.svg      # Extension icon
+├── assets/
+│   └── yui.jpg          # README image
+├── manifest.json        # Extension manifest (MV2)
+├── package.json         # npm scripts
+└── README.md
+```
+
 ## Technical Details
 
 - **Manifest V2** for Firefox compatibility
@@ -73,4 +93,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
-
+]]>

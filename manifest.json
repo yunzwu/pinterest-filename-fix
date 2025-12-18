@@ -23,13 +23,13 @@
   ],
 
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["src/background.js"]
   },
 
   "content_scripts": [
     {
       "matches": ["*://*.pinterest.com/*"],
-      "js": ["content.js"],
+      "js": ["src/content.js"],
       "run_at": "document_idle"
     }
   ]

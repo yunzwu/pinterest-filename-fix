@@ -119,3 +119,4 @@ browser.runtime.onMessage.addListener((msg) => {
 });
 
 console.log("[Pinterest Fix] Content script loaded");
+

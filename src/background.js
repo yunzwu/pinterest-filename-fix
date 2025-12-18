@@ -76,3 +76,4 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
 
   await downloadWithFilename(imageUrl, meta.title, meta.pinId);
 });
+
