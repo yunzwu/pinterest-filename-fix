@@ -3,11 +3,11 @@
  * Intercepts the "Download image" button to download with proper filenames.
  */
 
-// Regex for download button text (all languages in one pattern)
 const DOWNLOAD_REGEX = /\b(baixar|download|descargar|télécharger|herunterladen)\b/i;
+const CLICKABLE_SELECTOR = "button,[role=\"button\"],a";
 
-// Debounce flag to prevent double downloads
 let isDownloading = false;
+let metaCache = { href: "", title: "", pinId: "", imageUrl: "" };
 
 /**
  * Check if element or its parents are the download button (max 5 levels)
@@ -24,88 +24,98 @@ function isDownloadButton(el) {
 }
 
 /**
- * Get the best image URL from the page
+ * Cache page title/pin for this URL to avoid repeated DOM queries
+ */
+function getPageMeta() {
+  const href = location.href;
+  if (metaCache.href === href) return metaCache;
+
+  const metaTitle = document.querySelector('meta[property="og:title"]');
+  const pinMatch = href.match(/\/pin\/(\d+)/);
+
+  metaCache = {
+    href,
+    title: (metaTitle?.content || document.title || "").trim(),
+    pinId: pinMatch?.[1] || "",
+    imageUrl: ""
+  };
+
+  return metaCache;
+}
+
+/**
+ * Get the best image URL from the page, with a cheap fallback
  */
 function getBestImageUrl() {
-  // Try og:image first
+  const meta = getPageMeta();
+  if (meta.imageUrl) return meta.imageUrl;
+
   const metaImg = document.querySelector('meta[property="og:image"]');
-  if (metaImg?.content) return metaImg.content;
+  if (metaImg?.content) return (meta.imageUrl = metaImg.content);
 
-  // Try main pin image
-  const mainImg = document.querySelector('[data-test-id="pin-closeup-image"] img');
-  if (mainImg?.src) return mainImg.src;
+  const mainImg =
+    document.querySelector('[data-test-id="pin-closeup-image"] img') ||
+    document.querySelector('[data-test-id="pin-closeup-image"]');
+  if (mainImg?.src) return (meta.imageUrl = mainImg.src);
 
-  // Fallback: largest pinimg.com image
-  const images = document.querySelectorAll('img[src*="pinimg.com"]');
+  const images = document.querySelectorAll('[data-test-id="pin-closeup"] img[src*="pinimg.com"], img[src*="pinimg.com"]');
   let best = null;
   let bestSize = 0;
+  let checked = 0;
   for (const img of images) {
+    if (++checked > 30) break; // avoid scanning huge feeds
     const size = img.naturalWidth * img.naturalHeight;
     if (size > bestSize) {
       bestSize = size;
       best = img.src;
     }
   }
-  return best;
+  if (!best) return null;
+
+  meta.imageUrl = best;
+  return meta.imageUrl;
 }
 
 /**
  * Handle download button click
  */
 function handleDownloadClick(event) {
-  // Early exit if already downloading
   if (isDownloading) return;
-  
-  // Check if it's a download button
-  if (!isDownloadButton(event.target)) return;
+  const buttonLike = event.target.closest(CLICKABLE_SELECTOR);
+  if (!buttonLike || !isDownloadButton(buttonLike)) return;
 
-  // Get image URL
   const imageUrl = getBestImageUrl();
   if (!imageUrl) {
     console.log("[Pinterest Fix] No image found");
     return;
   }
 
-  // Prevent Pinterest's default download
   event.preventDefault();
   event.stopPropagation();
   event.stopImmediatePropagation();
 
-  // Debounce
   isDownloading = true;
   setTimeout(() => { isDownloading = false; }, 500);
 
-  // Get title for filename
-  const metaTitle = document.querySelector('meta[property="og:title"]');
-  const title = metaTitle?.content || document.title || "";
-  const pinMatch = location.pathname.match(/\/pin\/(\d+)/);
-  const pinId = pinMatch?.[1] || "";
+  const meta = getPageMeta();
 
-  console.log("[Pinterest Fix] Downloading:", imageUrl, "as:", title || pinId);
+  console.log("[Pinterest Fix] Downloading:", imageUrl, "as:", meta.title || meta.pinId);
 
-  // Send to background script
   browser.runtime.sendMessage({
     type: "DOWNLOAD_IMAGE",
     imageUrl,
-    title: title.trim(),
-    pinId
+    title: meta.title,
+    pinId: meta.pinId
   });
 }
 
-// Single event listener in capture phase
 document.addEventListener("click", handleDownloadClick, true);
 
-// Message listener for context menu
 browser.runtime.onMessage.addListener((msg) => {
   if (msg?.type !== "GET_PIN_META") return;
-  
-  const metaTitle = document.querySelector('meta[property="og:title"]');
-  const pinMatch = location.pathname.match(/\/pin\/(\d+)/);
-  
-  return Promise.resolve({
-    title: (metaTitle?.content || document.title || "").trim(),
-    pinId: pinMatch?.[1] || ""
-  });
+
+  const meta = getPageMeta();
+  return Promise.resolve({ title: meta.title, pinId: meta.pinId });
 });
 
 console.log("[Pinterest Fix] Content script loaded");

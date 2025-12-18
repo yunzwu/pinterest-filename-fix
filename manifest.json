@@ -6,11 +6,18 @@
   "icons": {
     "48": "icons/icon-48.svg"
   },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "pinterest-filename-fix@ayk",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  },
 
   "permissions": [
     "downloads",
     "contextMenus",
-    "activeTab",
     "*://*.pinterest.com/*",
     "*://i.pinimg.com/*"
   ],

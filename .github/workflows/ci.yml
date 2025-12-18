@@ -10,16 +10,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Lint
-        uses: kewisch/action-web-ext@v1
-        with:
-          cmd: lint
+      - name: Install web-ext
+        run: npm install -g web-ext@7
 
-      - name: Build
-        uses: kewisch/action-web-ext@v1
-        with:
-          cmd: build
-          args: -o --overwrite-dest --artifacts-dir web-ext-artifacts
+      - name: Lint and Build
+        run: |
+          web-ext lint
+          web-ext build -o --overwrite-dest --artifacts-dir web-ext-artifacts
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

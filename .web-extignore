@@ -1,0 +1,8 @@
+.github/
+web-ext-artifacts/
+*.xpi
+*.zip
+.vscode/
+.idea/
+README.md
+LICENSE
