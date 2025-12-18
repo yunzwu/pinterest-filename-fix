@@ -30,11 +30,13 @@ function getExtensionFromUrl(url) {
 /**
  * Download image with proper filename
  */
-async function downloadWithFilename(imageUrl, title, pinId) {
+async function downloadWithFilename(imageUrl, title, imageAlt, pinId, imageId) {
   const ext = getExtensionFromUrl(imageUrl);
   const base =
     sanitizeBaseName(title) ||
+    sanitizeBaseName(imageAlt) ||
     sanitizeBaseName(pinId) ||
+    sanitizeBaseName(imageId) ||
     "pinterest-image";
 
   const filename = `Pinterest/${base}${ext}`;
@@ -48,7 +50,7 @@ async function downloadWithFilename(imageUrl, title, pinId) {
 
 browser.runtime.onMessage.addListener(async (msg, sender) => {
   if (msg?.type === "DOWNLOAD_IMAGE") {
-    await downloadWithFilename(msg.imageUrl, msg.title, msg.pinId);
+    await downloadWithFilename(msg.imageUrl, msg.title, msg.imageAlt, msg.pinId, msg.imageId);
     return;
   }
 });
@@ -65,6 +67,6 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
   } catch {
   }
 
-  await downloadWithFilename(imageUrl, meta.title, meta.pinId);
+  await downloadWithFilename(imageUrl, meta.title, meta.imageAlt, meta.pinId, meta.imageId);
 });
 
