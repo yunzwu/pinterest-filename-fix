@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "web-ext run --firefox=\"C:\\Program Files\\Zen Browser\\zen.exe\"",
     "lint": "web-ext lint",
+    "prebuild": "node -e \"const fs = require('fs'); const path = require('path'); const zipPath = path.join('web-ext-artifacts', 'pinterest_filename_fix-0.1.0.zip'); try { fs.unlinkSync(zipPath); } catch(e) {}\"",
     "build": "web-ext build -o --overwrite-dest",
     "sign": "web-ext sign"
   },
